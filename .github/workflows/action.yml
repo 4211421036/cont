@@ -1,0 +1,38 @@
+name: Arduino
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    name: Deploy to Cloudflare
+    steps:
+    - name: Generate IoT Dashboard
+      # You may pin to the exact commit or the version.
+      # uses: 4211421036/iotgithub@af467720b180d0565b6dccd57580fb56b3f72204
+      uses: 4211421036/iotgithub@v1.0.1
+      with:
+        # Data JSON from Arduino IDE Update Automation
+        json_filename:  'sensor.json'
+        # HTML File for showing WebApp Generated
+        html_filename: 'index.html'
+        # CSS File for Styling WebApp
+        css_filename: 'styles.css'
+        # Title of the website
+        site_title: 'GitHub IoT Arduino'
+        # Title of the chart
+        chart_title: 'IoT Data Chart'
+            
+    - name: Commit and push changes
+      run: |
+        git config --global user.name "GitHub Actions"
+        git config --global user.email "actions@github.com"
+        git add .
+        if git commit -m "Auto-generated IoT dashboard files"; then
+          git push
+        else
+          echo "No changes to commit."
+        fi
